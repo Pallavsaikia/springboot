@@ -69,13 +69,19 @@ public class StudentController {
 
     @PutMapping(value = "/student/{id}")
     public ResponseEntity<Object> update(@Valid @PathVariable  Integer id, @RequestBody StudentDTO studentDTO) {
-        Student s = new Student();
-        s.setId(id);
-        s.setAge(studentDTO.getAge());
-        s.setName(studentDTO.getName());
-        studentJpaRepo.save(s);
-        SuccessResponse sr=new SuccessResponse(true,"added",null);
-        return new ResponseEntity<>(sr, HttpStatus.OK);
+        Student s1 =studentJpaRepo.findById(id).orElse(null);
+        if(s1!=null) {
+            Student s = new Student();
+            s.setId(id);
+            s.setAge(studentDTO.getAge());
+            s.setName(studentDTO.getName());
+            studentJpaRepo.save(s);
+            SuccessResponse sr = new SuccessResponse(true, "added", null);
+            return new ResponseEntity<>(sr, HttpStatus.OK);
+        }else{
+            SuccessResponse sr=new SuccessResponse(false,"no student found",null);
+            return new ResponseEntity<>(sr, HttpStatus.OK);
+        }
 
     }
 }
